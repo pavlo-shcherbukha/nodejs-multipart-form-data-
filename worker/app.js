@@ -21,6 +21,9 @@ app.set('logger', winston);
 const applogger = app.get('logger').child({ label: 'app' });
 applogger.info("app logger added");
 
+app.set('rssurl',  process.env.RSSURL )
+
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -35,6 +38,7 @@ applogger.info("making routers");
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+require('./routes/loadrss')(app);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
