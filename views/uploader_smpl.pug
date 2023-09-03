@@ -1,0 +1,9 @@
+doctype html
+head
+  title File Upload simple
+  meta(name='viewport' content='width=device-width, initial-scale=1')
+h1  Simple File Uploader without any addidtianl libs 
+form#uploadForm(enctype='multipart/form-data' action='uploadersmpl' method='post')
+  input(type='file' name='file')
+  | Upload
+  input(type='submit' value='Upload' name='submit')
