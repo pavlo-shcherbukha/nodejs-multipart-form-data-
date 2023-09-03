@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var useragent = require('express-useragent');
 var logger = require('morgan');
+var fileUpload = require('express-fileupload');
 
 require('dotenv').config()
 var  winston = require('./utils/winston');
@@ -19,6 +20,12 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.set('logger', winston);
+
+
+
+app.set('upltemp', path.join(__dirname, process.env.UPLOAD_TMP))
+app.set('uplstrg', path.join(__dirname, process.env.UPLOAD_STORE))
+
 const applogger = app.get('logger').child({ label: 'app' });
 applogger.info("app logger added");
 
@@ -31,13 +38,34 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(useragent.express());
 
+// File upload configuration
+app.use(fileUpload( 
+                    { 
+                      useTempFiles: true, 
+                      tempFileDir: app.get('upltemp'), 
+                      debug: true, 
+                      limits: { fileSize: 50 * 1024 * 1024 }  
+                    }
+                  )
+);
+
+
+
+
+
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+
+
 
 applogger.info("Create Node Server");
 
 applogger.info("making routers");
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+require('./routes/uploader_mp')(app);
+require('./routes/uploader_smpl')(app);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
