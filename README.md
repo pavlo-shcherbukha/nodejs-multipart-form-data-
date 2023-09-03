@@ -1,10 +1,20 @@
 # nodejs-multipart
 
-## Standard Node.js express application with 
-- Upload file using [multiparty](https://www.npmjs.com/package/multiparty)
-- Upload file using [express-fileupload](https://www.npmjs.com/package/express-fileupload)
+## Applications
 
-## Interesting firures
+### /server - Backend
+
+The standard Node.js express application which uploads files using html forms and using 2 libraries.
+
+- path **/uploadermp**   uploads file using [multiparty](https://www.npmjs.com/package/multiparty)
+Router is in /routes/uploader_mp.js.
+
+- path **/uploadersmpl** upload file using [express-fileupload](https://www.npmjs.com/package/express-fileupload)
+Router is  in /routes/uploader_smpl.js.
+
+For both routes method **get**  returns the html form for file upload. Method **post** processing file uploading.
+Method **delete** is not  implemented yet.
+#### Interesting firures
 
 
 - winston logger  how to  customize
@@ -50,17 +60,16 @@ app.set('uplstrg', path.join(__dirname, process.env.UPLOAD_STORE))
 
 
 
-## run on your laptop
-
-
+#### run on your laptop
 
 
 ```
     git clone
+    cd /server
     npm install
 ``````
 
--  prepare .env file
+-  prepare server/.env file
 
 ```
 ## local config
@@ -72,10 +81,20 @@ UPLOAD_TMP=/upltmp
 - run application
 
 ```
+    cd /server
     npm start
 
 ```
 
 application will be accesset on http:/localhost:8080
+
+
+### /worker -  builds multypart/form-data programatically
+
+This is  Node.js express server whith example how to build ultypart/form-data programatically using library [axios](https://www.npmjs.com/package/axios) and [form-data](https://www.npmjs.com/package/form-data). It invokes methods  **post** developed for **/server** app
+
+
+
+
 
 
