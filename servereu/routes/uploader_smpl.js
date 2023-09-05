@@ -18,7 +18,14 @@ module.exports = function (app) {
           }
           var rawdata = req.files.file.data ;
           log.info(`Uploading file  ${req.files.file.name}`);
-          fs.writeFileSync(app.get('uplstrg')+'/'+req.files.file.name,  rawdata);
+          useTempFiles=app.get('useTempFiles')
+          if (useTempFiles){
+              fs.copyFileSync( req.files.file.tempFilePath, app.get('uplstrg')+'/'+req.files.file.name);              
+          } 
+          else {
+              
+              fs.writeFileSync(app.get('uplstrg')+'/'+req.files.file.name,  rawdata);
+          }    
           return res.status(200).json({  ok: 'true', 
                                           status: 200, 
                                           data:  { 

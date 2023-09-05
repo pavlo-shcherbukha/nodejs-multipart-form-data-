@@ -62,7 +62,7 @@ module.exports = function (app) {
                 return res.render('browse_content_mp.pug', {title: 'результат обробки файла от GIANOSa', data: {fname:   infileprop , fileptath: infileprop.originalFilename} })
             } else if (infilemime==='image/jpeg'){
               return res.render('browse_content_mp.pug', {title: 'результат обробки файла от GIANOSa', data: {fname:   infileprop , fileptath: infileprop.originalFilename} })
-            } else if (infilemime==='text/plain'){
+            } else if (infilemime==='text/plain'||infilemime==='application/json'|| infilemime==='application/xml'){
               return res.render('browse_content_mp_text.pug', {title: 'результат обробки файла от GIANOSa', data: {fname:   infileprop , text: infilecontent} })
             } else {
 

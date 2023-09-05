@@ -8,7 +8,8 @@ var logger = require('morgan');
 var fileUpload = require('express-fileupload');
 
 require('dotenv').config()
-var  winston = require('./utils/winston');
+var winston = require('./utils/winston');
+var apputils = require('./utils/apputils');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -25,6 +26,7 @@ app.set('logger', winston);
 
 app.set('upltemp', path.join(__dirname, process.env.UPLOAD_TMP))
 app.set('uplstrg', path.join(__dirname, process.env.UPLOAD_STORE))
+app.set('useTempFiles', apputils.stringToBoolean(process.env.EXPR_USETEMPFILES))
 
 const applogger = app.get('logger').child({ label: 'app' });
 applogger.info("app logger added");
@@ -39,9 +41,10 @@ app.use(bodyParser.json());
 app.use(useragent.express());
 
 // File upload configuration
+
 app.use(fileUpload( 
                     { 
-                      useTempFiles: true, 
+                      useTempFiles: app.get('useTempFiles'), 
                       tempFileDir: app.get('upltemp'), 
                       debug: true, 
                       limits: { fileSize: 50 * 1024 * 1024 }  

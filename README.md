@@ -95,6 +95,11 @@ This is  Node.js express server whith example how to build ultypart/form-data pr
 
 
 
+https://axios-http.com/docs/multipart
+https://maximorlov.com/send-a-file-with-axios-in-nodejs/
+https://www.npmjs.com/package//axios?activeTab=readme
+
+
 
 
 
