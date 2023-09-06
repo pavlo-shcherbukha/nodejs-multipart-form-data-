@@ -4,19 +4,25 @@
 
 ### /servermp - Backend
 
-The standard Node.js express application which uploads files using html forms and using  library [multiparty](https://www.npmjs.com/package/multiparty).
+The standard Node.js express application which  parse multipart/form=data,  uploads files using html forms and using  library [multiparty](https://www.npmjs.com/package/multiparty).
 
-- path **/uploadermp**   uploads file.
+- path **/uploader**   uploads file.
 Router is in /routes/uploader_mp.js.
+
+
+- path **/uploadermu**   uploads number of file. Request is making from **worker** service
+Router is in /routes/uploader_mu.js.
 
 Accessed on http://localhost:8080
 
+
+The structure of parsed data:
 
 ```json
 {
   fieldName: "file",
   originalFilename: "openapi.json",
-  path: "C:\\PSHDEV\\PSH-WorkShops\\github-io\\tz-000014-node-multypart\\node-multypart\\servermp\\upltmp\\CPHI0cL0Kv_VIhRA0HmoBvro.json",
+  path: "....\\servermp\\upltmp\\CPHI0cL0Kv_VIhRA0HmoBvro.json",
   headers: {
     "content-disposition": "form-data; name=\"file\"; filename=\"openapi.json\"",
     "content-type": "application/json",
@@ -25,29 +31,49 @@ Accessed on http://localhost:8080
 }
 ```
 
-```json
-{
-  fieldName: "file",
-  originalFilename: "rssfile.xml",
-  path: "C:\\PSHDEV\\PSH-WorkShops\\github-io\\tz-000014-node-multypart\\node-multypart\\servermp\\upltmp\\bx_2jRWfH9tIHBMd_ikciuA5.xml",
-  headers: {
-    "content-disposition": "form-data; name=\"file\"; filename=\"rssfile.xml\"",
-    "content-type": "application/xml",
-  },
-  size: 134127,
-}
 
-```
 ### /servereu - Backend
 The standard Node.js express application which uploads files using html forms and using  library [express-fileupload](https://www.npmjs.com/package/express-fileupload)
-- path **/uploadersmpl** upload file.
-Router is  in /routes/uploader_smpl.js.
+
+- path **/uploader**   uploads file.
+Router is in /routes/uploader_smpl.js.
+
+- path **/uploadermu**   uploads number of file. Request is making from **worker** service
+Router is in /routes/uploader_multi.js.
+
 
 Accessed on http://localhost:8081
 
+The structure of parsed data:
 
+```json
+{
+  file: [
+    {
+      name: "cpic-1.jpg",
+      data: new Uint8Array([]),
+      size: 47626,
+      encoding: "7bit",
+      tempFilePath: "C:\..........\servereu\\upltmp\\tmp-1-1693987901679",
+      truncated: false,
+      mimetype: "image/jpeg",
+      md5: "c14a1d0c059fa8e66aadfdfd4127905c",
+    },
+    {
+      name: "cpic-2.jpg",
+      data: new Uint8Array([]),
+      size: 91460,
+      encoding: "7bit",
+      tempFilePath: "C:\.......\\servereu\\upltmp\\tmp-2-1693987901687",
+      truncated: false,
+      mimetype: "image/jpeg",
+      md5: "bbd510405d7b3316292ee4656faf4550",
+    },
+  ],
+}
+```
 
-### /worker - service  which makes multipart/form-data programmatically
+### /worker - service  which makes multipart/form-data programmatically and  invoke  servermp ot servereu depends on ${BEURL} in .env file
 
 - configuration file  .env
 ```bash
@@ -60,41 +86,39 @@ RSSURL="http://feeds.bbci.co.uk/news/rss.xml"
 
 ## configuration axisos timeout 60 sec 
 AXIOSTIMEOUT=60000
-## URL back END
-BEURL="http://localhost:8080/uploadermp"
+## URL back END servermp
+BEURL="http://localhost:8080"
+## URL back END servereu
+##BEURL="http://localhost:8081"
 
 ```
-
-Accessed on http://localhost:8082
-
-#### routers
 
 - path /loadrss routes/loadrss.js
 
 Method http=get
 
-Getting rss feed from ${RSSURL} making multipart/form-data programmatically and send  form using axios to ${BEURL}.
+Getting rss feed from ${RSSURL} of .env, making multipart/form-data programmatically and send  form using axios to ${BEURL} of .env.
 
 
+- path /loadmulti routes/loadmulti.js
 
-routers
+Method http=get
 
+uploads two files from "/public" folder, making multipart/form-data programmatically and send files form using axios to ${BEURL} of .env.
+
+Accessed on http://localhost:8082
 
 ### Important thing
 
 For both routes method **get**  returns the html form for file upload. Method **post** processing file uploading.
-Method **delete** is not  implemented yet.
+
 
 You cannot use both libraries in one server because in some conditions "express-fileupload" lib influence  on the multiparty  library in case of "useTempFiles" is true. So that is a reason to split servers.
 
 As for me, "multiparty" library is more universal and more flexible. In addition it is event based and could parse files and fils also can parse partitions. It sore files in  temporary directory.
 The "express-fileupload" library is simpliers and is native for express application. It use the express middleware and it means that it could influence on the other libraries
 
-
-
 ### Additional interesting features from my point  of view
-
-
 
 
 ```
@@ -138,21 +162,25 @@ app.set('uplstrg', path.join(__dirname, process.env.UPLOAD_STORE))
 
 ```
 
-
-
 #### run on your laptop
 
+run git clone
 
 ```
-    git clone
-    cd /server
+  git clone
+``` 
+  
+
+##### servermp
+```
+  
+    cd /servermp
     npm install
 ``````
 
--  prepare server/.env file
+-  prepare servermp/.env file
 
 ```
-## local config
 PORT=8080
 UPLOAD_STORE=/public
 UPLOAD_TMP=/upltmp
@@ -161,12 +189,76 @@ UPLOAD_TMP=/upltmp
 - run application
 
 ```
-    cd /server
+    cd /servermp
     npm start
 
 ```
 
 application will be accesset on http:/localhost:8080
+
+
+##### servereu
+
+```
+  
+    cd /servereu
+    npm install
+``````
+
+-  prepare servereu/.env file
+
+```
+PORT=8081
+UPLOAD_STORE=/public
+UPLOAD_TMP=/upltmp
+```
+
+- run application
+
+```
+    cd /servereu
+    npm start
+
+```
+
+application will be accesset on http:/localhost:8081
+
+
+##### worker
+
+```
+  
+    cd /worker
+    npm install
+``````
+
+-  prepare servereu/.env file
+
+```
+# port
+PORT=8082
+# URL for RSS uploading
+#RSSURL="https://static.censor.net/censornet/rss/rss_uk_news.xml"
+RSSURL="http://feeds.bbci.co.uk/news/rss.xml"
+
+## configuration axisos timeout 60 sec 
+AXIOSTIMEOUT=60000
+## route req to servermp
+BEURL="http://localhost:8080"
+
+## route req to servereu
+## BEURL="http://localhost:8081"
+
+
+```
+
+- run application
+
+```
+    cd /worker
+    npm start
+
+```
 
 
 ### /worker -  builds multypart/form-data programatically
