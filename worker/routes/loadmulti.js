@@ -10,30 +10,20 @@ module.exports = function (app) {
 
     router.get('/', function(req, res, next) {
       log = logger.child({ label: 'load-rss' });
-      const url = app.get('rssurl');
+
       var form = new FormData();
-      return axios({
-                      url: url,
-                      method: 'GET',
-                      headers: {"Content-Type": "application/json"} 
-      })
-      .then (result=>{
-
-        form.append('RSSURL',  app.get('rssurl') )
-        const buff = Buffer.from( result.data, "utf-8");
-        form.append('file', buff,'rssfile.xml' );
-
-        u= app.get("beurl")
-        var h=form.getHeaders()
-        return axios( { method:  "post",
+      form.append("description","Load number of files")
+      form.append("text", "free text")
+      form.append('file', fs.createReadStream('public/images/cpic-1.jpg'), 'cpic-1.jpg');
+      form.append('file', fs.createReadStream('public/images/cpic-2.jpg'), 'cpic-2.jpg');
+      var h=form.getHeaders()
+      return axios( { method:  "post",
                         timeout: app.get('axiostimeout'),
-                        url:  app.get("beurl") + "/uploader",
+                        url:  app.get("beurl") + "/uploadermu",
                         data:   form, 
                         headers: form.getHeaders()
                       }
-                    );
-
-      })
+                    )
       .then( result=>{
         return res.status(200).end(result.data) 
       })
@@ -48,6 +38,6 @@ module.exports = function (app) {
     });
 
 
-    app.use('/loadrss', router);
+    app.use('/loadmulti', router);
 }
 

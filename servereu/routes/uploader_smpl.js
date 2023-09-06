@@ -57,6 +57,6 @@ module.exports = function (app) {
     });
 
 
-    app.use('/uploadersmpl', router);
+    app.use('/uploader', router);
 }
 

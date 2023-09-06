@@ -22,7 +22,10 @@ const applogger = app.get('logger').child({ label: 'app' });
 applogger.info("app logger added");
 
 app.set('rssurl',  process.env.RSSURL )
+app.set('axiostimeout',  parseInt(process.env.AXIOSTIMEOUT) )
+app.set('beurl',  process.env.BEURL )
 
+xx=app.get('beurl')
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -39,7 +42,7 @@ applogger.info("making routers");
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 require('./routes/loadrss')(app);
-
+require('./routes/loadmulti')(app);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
