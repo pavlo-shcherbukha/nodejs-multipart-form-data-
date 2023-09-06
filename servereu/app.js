@@ -67,9 +67,9 @@ applogger.info("Create Node Server");
 applogger.info("making routers");
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-require('./routes/uploader_mp')(app);
-require('./routes/uploader_smpl')(app);
 
+require('./routes/uploader_smpl')(app);
+require('./routes/uploader_multi')(app);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
